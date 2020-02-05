@@ -56,65 +56,68 @@ void Tree::makeMaxHeap(Node* p) {
     if(p == nullptr){
         return;
     }
-    makeMaxHeap(p->l_child);
-    if(p->parent == nullptr) {
+    else if(p->l_child == nullptr && p->r_child == nullptr && p->parent != nullptr){
+        if(p->value > p->parent->value){
+            temp = p->value;
+            p->value = p->parent->value;
+            p->parent->value = temp;
+        }
         return;
     }
-    if(p->value > p->parent->value){
-        temp = p->value;
-        p->value = p->parent->value;
-        p->parent->value = temp;
-    }
-
-
-    makeMaxHeap(p->r_child);
-
-    /*
-    Node* temp;
-    int lValue, rValue, pValue;
-    if(p == nullptr){
-        return;
-    }
-    else if(p->l_child == nullptr && p->r_child == nullptr){
-        return;
-    }
-    else if(p->r_child == nullptr){
+    else if(p->r_child == nullptr && p->parent != nullptr){
         makeMaxHeap(p->l_child);
-        lValue = p->l_child->value;
-        rValue = -1;
-        pValue = p->value;
-    }
-    else if(p->l_child == nullptr){
-        makeMaxHeap(p->r_child);
-        lValue = -1;
-        rValue = p->r_child->value;
-        pValue = p->value;
+        if(p->value > p->parent->value){
+            temp = p->value;
+            p->value = p->parent->value;
+            p->parent->value = temp;
+            makeMaxHeap(p->l_child);
+        }
 
+        return;
+    }
+    else if(p->l_child == nullptr && p->parent != nullptr){
+        makeMaxHeap(p->r_child);
+        if(p->value > p->parent->value){
+            temp = p->value;
+            p->value = p->parent->value;
+            p->parent->value = temp;
+            makeMaxHeap(p->r_child);
+        }
+        return;
+    }
+    else if (p->parent == nullptr){
+        makeMaxHeap(p->r_child);
+        makeMaxHeap(p->l_child);
+        if(p->value < p->r_child->value){
+            temp = p->r_child->value;
+            p->r_child->value = p->value;
+            p->value = temp;
+        }
+        if(p->value < p->l_child->value){
+            temp = p->l_child->value;
+            p->l_child->value = p->value;
+            p->value = temp;
+        }
+        return;
     }
     else {
-        lValue = p->l_child->value;
-        rValue = p->r_child->value;
-        pValue = p->value;
+        makeMaxHeap(p->r_child);
+        makeMaxHeap(p->l_child);
+        if(p->value > p->parent->value){
+            temp = p->value;
+            p->value = p->parent->value;
+            p->parent->value = temp;
+            makeMaxHeap(p->r_child);
+            makeMaxHeap(p->l_child);
+        }
+        return;
     }
-    if(lValue <= pValue && rValue <= pValue){
-
-    }
-    else if(lValue > rValue && lValue > pValue) {
-        p->l_child->value = pValue;
-        p->value = lValue;
-    }
-    else if(rValue > lValue && rValue > pValue){
-        p->r_child->value = pValue;
-        p->value = rValue;
-    }
-    makeMaxHeap(p->l_child);
-    makeMaxHeap(p->r_child);
-     */
 }
 
 int Tree::LeftHeavy(Node* p) {
     //Need to implement this funciton.
     Node* temp;
+    int temp1;
     if(p == nullptr){
         return 0;
     }
@@ -134,6 +137,11 @@ int Tree::LeftHeavy(Node* p) {
             temp = p->l_child;
             p->l_child = p->r_child;
             p->r_child = temp;
+        }
+        if(p->value > p->l_child->value){
+            temp1 = p->l_child->value;
+            p->l_child->value = p->value;
+            p->r_child->value = temp1;
         }
         return p->value + lValue + rValue;
     }
