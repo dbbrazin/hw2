@@ -52,7 +52,26 @@ public:
 };
 void Tree::makeMaxHeap(Node* p) {
     //Need to implement this function
+    int temp;
+    if(p == nullptr){
+        return;
+    }
+    makeMaxHeap(p->l_child);
+    if(p->parent == nullptr) {
+        return;
+    }
+    if(p->value > p->parent->value){
+        temp = p->value;
+        p->value = p->parent->value;
+        p->parent->value = temp;
+    }
+
+
+    makeMaxHeap(p->r_child);
+
+    /*
     Node* temp;
+    int lValue, rValue, pValue;
     if(p == nullptr){
         return;
     }
@@ -61,28 +80,36 @@ void Tree::makeMaxHeap(Node* p) {
     }
     else if(p->r_child == nullptr){
         makeMaxHeap(p->l_child);
-        return;
+        lValue = p->l_child->value;
+        rValue = -1;
+        pValue = p->value;
     }
     else if(p->l_child == nullptr){
         makeMaxHeap(p->r_child);
-        return;
+        lValue = -1;
+        rValue = p->r_child->value;
+        pValue = p->value;
+
     }
-    int lValue =p->l_child->value;
-    int rValue =p->r_child->value;
-    int pValue =p->value;
+    else {
+        lValue = p->l_child->value;
+        rValue = p->r_child->value;
+        pValue = p->value;
+    }
     if(lValue <= pValue && rValue <= pValue){
 
     }
-    else if(lValue > rValue) {
+    else if(lValue > rValue && lValue > pValue) {
         p->l_child->value = pValue;
         p->value = lValue;
     }
-    else {
+    else if(rValue > lValue && rValue > pValue){
         p->r_child->value = pValue;
         p->value = rValue;
     }
     makeMaxHeap(p->l_child);
     makeMaxHeap(p->r_child);
+     */
 }
 
 int Tree::LeftHeavy(Node* p) {
@@ -94,21 +121,25 @@ int Tree::LeftHeavy(Node* p) {
     else if(p->l_child == nullptr && p->r_child == nullptr){
         return p->value;
     }
-    else if(p->r_child == nullptr){
+    else if(p->r_child == nullptr && p->parent != nullptr){
         return p->value + LeftHeavy(p->l_child);
     }
-    else if(p->l_child == nullptr){
+    else if(p->l_child == nullptr && p->parent != nullptr){
         return p->value + LeftHeavy(p->r_child);
     }
-
-    int lValue =p->l_child->value;
-    int rValue =p->r_child->value;
-    if(lValue > rValue) {
-        temp = p->l_child;
-        p->l_child = p->r_child;
-        p->r_child = temp;
+    else if (p->parent == nullptr){
+        int lValue = LeftHeavy(p->l_child);
+        int rValue = LeftHeavy(p->r_child);
+        if (rValue > lValue) {
+            temp = p->l_child;
+            p->l_child = p->r_child;
+            p->r_child = temp;
+        }
+        return p->value + lValue + rValue;
     }
-    return p->value + LeftHeavy(p->l_child) + LeftHeavy(p->r_child);
+    else {
+        return p->value + LeftHeavy(p->l_child) + LeftHeavy(p->r_child);
+    }
 }
 
 bool Tree::Find(Node* p, int k) {
@@ -167,6 +198,7 @@ void Tree::printTree1(Node* p) { //in-order printing
     if (p == nullptr) return;
     printTree1(p->l_child);
     cout << p->value << " ";
+    //cout <<  &p << " p: " << p->parent << " " << p->value << "\n";
     printTree1(p->r_child);
 }
 
